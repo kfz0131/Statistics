@@ -1,5 +1,3 @@
 # Statistics
 
-
-
-1234
+Projects for James Scholar Program and Fun
