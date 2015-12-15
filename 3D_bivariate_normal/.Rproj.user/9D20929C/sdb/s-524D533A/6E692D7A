@@ -1,0 +1,17 @@
+{
+    "contents" : "# package setup\n#install.packages(\"ellipse\")\nlibrary(ellipse)\n\n\n# helper functions for plotting\nbvn_countour_plot <- function(ux = 0, \n                              uy = 0, \n                              sx = 1, \n                              sy = 1, \n                              rho = 0.5, \n                              xlab = \"xlab\", \n                              ylab = \"ylab\"){\n  \n  mu <- c(ux, uy)\n  s12 <- rho * sx * sy\n  sigma  <- cbind(c(sx^2,s12),c(s12,sy^2)) \n  \n  xmax <- round((max(ellipse(sigma, level = 0.999)[,1] + mu[1]))) + 1\n  xmin <- round((min(ellipse(sigma, level = 0.999)[,1] + mu[1]))) - 1\n  \n  ymax <- round((max(ellipse(sigma, level = 0.999)[,2] + mu[2]))) + 1\n  ymin <- round((min(ellipse(sigma, level = 0.999)[,2] + mu[2]))) - 1\n  \n  #if(xmin < 250 & xmin > 0){\n  #  xmin <- 0\n  #}\n  \n  #if(ymin < 250 & ymin > 0){\n  #  ymin <- 0\n  #}\n  \n  plot(\n    ellipse(sigma, level = 0.90)[ ,1] + mu[1],\n    ellipse(sigma, level = 0.90)[ ,2] + mu[2],\n    xlab = xlab, ylab = ylab,\n    xlim = c(xmin, xmax), ylim = c(ymin, ymax), type=\"l\")\n  \n  points(mu[1], mu[2], pch=3)\n  \n  lines(\n    ellipse(sigma, level = 0.999)[ ,1] + mu[1],\n    ellipse(sigma, level = 0.999)[ ,2] + mu[2],\n    xlim = c(xmin, xmax), ylim = c(ymin, ymax), type=\"l\")\n  \n  lines(\n    ellipse(sigma, level = 0.99)[ ,1] + mu[1],\n    ellipse(sigma, level = 0.99)[ ,2] + mu[2],\n    xlim = c(xmin, xmax), ylim = c(ymin, ymax), type=\"l\")\n  \n  lines(\n    ellipse(sigma, level = 0.50)[ ,1] + mu[1],\n    ellipse(sigma, level = 0.50)[ ,2] + mu[2],\n    xlim = c(xmin, xmax), ylim = c(ymin, ymax), type=\"l\")\n  \n  points(mu[1], mu[2], pch=3)\n  \n}\n\nadd_conditional_mean <- function(ux = 0, uy = 0, sx = 1, sy = 1, rho = 0.5, given = \"x\"){\n  \n  if(given == \"x\"){\n    abline(\n      uy - ux * rho * sy / sx,\n      rho * sy / sx,\n      col = \"green\"\n    )\n  }\n  \n  if(given == \"y\"){\n    abline(\n      uy - ux * sy / (rho * sx),\n      sy / (rho * sx),\n      col = \"green\"\n    )\n  }\n  \n}\n\n#shade area\nux <- 370\nsx <- 50\nuy <- 270\nsy <- 40\nrho <- -0.80\nxlab = \"Guns\"\nylab = \"Butter\"\n\na <- 400\nbc <- 450\nbp <- 250\nd <- 700\n\nabline(v = a, col = \"blue\")\nfor(i in seq(a, a * 5, by = 5)){\n   abline(v = i, col = \"blue\", lty = 3)\n}\n",
+    "created" : 1449512209007.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "392837130",
+    "id" : "6E692D7A",
+    "lastKnownWriteTime" : 1449778411,
+    "path" : "C:/D/Study/James Scholar Program/Fall 2015 STAT 420/Honor/Professor contour plot code.R",
+    "project_path" : "Professor contour plot code.R",
+    "properties" : {
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

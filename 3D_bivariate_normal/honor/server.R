@@ -63,7 +63,10 @@ shinyServer(function(input, output) {
                                   sy,
                                   rho,
                                   cx,
-                                  cy) {
+                                  cy,
+                                  condition,
+                                  X,
+                                  Y) {
       library(ellipse)
       xlabel <- "x"
       ylabel <- "y"
@@ -107,17 +110,19 @@ shinyServer(function(input, output) {
       
       
       # Add shaded area if given X or Y
-      if (!is.null(cy)) {
-        abline(h = cy, col = "blue")
-        for (i in seq(cy, abs(cy) * 5, by = 0.1)) {
-          abline(h = i, col = "blue", lty = 3)
+      if (condition == TRUE) {
+        if (X == FALSE & Y == TRUE) {
+          abline(h = cy, col = "blue")
+          for (i in seq(cy, abs(cy) * 5, by = 0.1)) {
+            abline(h = i, col = "blue", lty = 3)
+          }
         }
-      }
-      
-      if (!is.null(cx)) {
-        abline(v = cx, col = "blue")
-        for (i in seq(cx, abs(cx) * 5, by = 0.01)) {
-          abline(v = i, col = "blue", lty = 3)
+        
+        if (Y == FALSE & X == TRUE) {
+          abline(v = cx, col = "blue")
+          for (i in seq(cx, abs(cx) * 5, by = 0.01)) {
+            abline(v = i, col = "blue", lty = 3)
+          }
         }
       }
       
@@ -130,7 +135,7 @@ shinyServer(function(input, output) {
       input$r,input$resolution,3.5,input$vr,input$hr
     )
     bvn_countour_plot(input$mu_x,input$mu_y,input$sx,input$sy,
-                      input$r,input$cx,input$cy)
+                      input$r,input$cx,input$cy,input$condition,input$X,input$Y)
   },
   height = 1000, width = 800)
   #---------------------------------------------------------------------------
@@ -300,7 +305,7 @@ shinyServer(function(input, output) {
       
       # condition on given X
       if (condition == TRUE) {
-        if (Y == FALSE) {
+        if (Y == FALSE & X == TRUE) {
           #i = which.min(abs(x - cx))
           for (i in which.min(abs(x - cx))-1:which.min(abs(x - cx))+1){
           for (j in seq_along(y)) {
@@ -325,7 +330,7 @@ shinyServer(function(input, output) {
           )
         }
         # condition on given Y
-        if (X == FALSE) {
+        if (X == FALSE & Y == TRUE) {
           j = which.min(abs(y - cy))
           for (i in seq_along(x)) {
             bivariate_normal[i, j] <-
