@@ -1,0 +1,17 @@
+{
+    "contents" : "shinyUI(fluidPage(\n  # Title\n  headerPanel(\"Bivariate Normal 3D-Plot\"),\n  \n  # Interactive input\n  sidebarLayout(\n    sidebarPanel(\n\n        sliderInput(\n          \"vr\",\n          label = \"Vertical Rotation:\",\n          min = -180,\n          max = 180,\n          value = 0\n        ),\n        sliderInput(\n          \"hr\",\n          label = \"Horizontal Rotation:\",\n          min = -180,\n          max = 180,\n          value = 0\n        ),\n      checkboxInput(\"condition\", \n                    label = \"Condition\",\n                    value = FALSE),\n      conditionalPanel(\n        condition = \"input.condition == true\",\n        checkboxInput(\"X\", \n                      label = \"Given X\",\n                      value = FALSE),\n        conditionalPanel(\n          condition = \"input.X == true\",\n          numericInput(\"cx\",\n                       label = \"Given X\",\n                       value = 0)\n        ),\n        checkboxInput(\"Y\", \n                      label = \"Given Y\",\n                      value = FALSE),\n        conditionalPanel(\n          condition = \"input.Y == true\",\n          numericInput(\"cy\",\n                       label = \"Given Y\",\n                       value = 10)\n        )\n      ),\n      numericInput(\"mu_x\",\n                   label = \"Mean of x\",\n                   value = 0),\n      numericInput(\"mu_y\",\n                   label = \"Mean of y\",\n                   value = 10),\n      numericInput(\"sx\",\n                   label = \"Standard Devidation of x\",\n                   value = 0.15),\n      numericInput(\"sy\",\n                   label = \"Standard Devidation of y\",\n                   value = 1),\n      numericInput(\"r\",\n                   label = \"Correlation (Enter between 0 and 1)\",\n                   value = 0.6),\n      radioButtons(\n        \"resolution\", label = h3(\"Resolution\"),\n        choices = list(\"Low\", \"High\")\n      )\n    ),\n    # Show the plot of the 3D bivariate normal distribution\n    mainPanel(\n      tabsetPanel(\n        tabPanel(\"3D Plot\", plotOutput(\"distPlot\")),\n        tabPanel(\"Conditional 3D Plot\", plotOutput(\"conditionPlot\")),\n        tabPanel(\"Slice Joint Probability\", plotOutput(\"slicePlot\"))\n      )    \n    ),\n    position = c('left','right'),\n    fluid = TRUE\n  )\n))\n",
+    "created" : 1447823219428.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1661202960",
+    "id" : "90E6A424",
+    "lastKnownWriteTime" : 1450160701,
+    "path" : "C:/D/Study/James Scholar Program/Fall 2015 STAT 420/Honor/honor/ui.R",
+    "project_path" : "honor/ui.R",
+    "properties" : {
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

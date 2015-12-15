@@ -5,42 +5,45 @@ shinyUI(fluidPage(
   # Interactive input
   sidebarLayout(
     sidebarPanel(
-      fluidRow(
-        column(10,
+
         sliderInput(
-        "vr",
-        label = "Vertical Rotation:",
-        min = -180,
-        max = 180,
-        value = 0
+          "vr",
+          label = "Vertical Rotation:",
+          min = -180,
+          max = 180,
+          value = 0
+        ),
+        sliderInput(
+          "hr",
+          label = "Horizontal Rotation:",
+          min = -180,
+          max = 180,
+          value = 0
+        ),
+      checkboxInput("condition", 
+                    label = "Condition",
+                    value = FALSE),
+      conditionalPanel(
+        condition = "input.condition == true",
+        checkboxInput("X", 
+                      label = "Given X",
+                      value = FALSE),
+        conditionalPanel(
+          condition = "input.X == true",
+          numericInput("cx",
+                       label = "Given X",
+                       value = 0)
+        ),
+        checkboxInput("Y", 
+                      label = "Given Y",
+                      value = FALSE),
+        conditionalPanel(
+          condition = "input.Y == true",
+          numericInput("cy",
+                       label = "Given Y",
+                       value = 10)
+        )
       ),
-      sliderInput(
-        "hr",
-        label = "Horizontal Rotation:",
-        min = -180,
-        max = 180,
-        value = 0
-      ),
-#       sliderInput(
-#         "cx",
-#         label = "Given x:",
-#         min = 0 - 3.5 * 0.15,
-#         max = 0 + 3.5 * 0.15,
-#         value = 0
-#       ),
-#       sliderInput(
-#         "cy",
-#         label = "Given y:",
-#         min = 10 - 3.5 * 1,
-#         max = 10 + 3.5 * 1,
-#         value = 10
-#       ),
-      numericInput("cx",
-             label = "Given X",
-             value = -999),
-      numericInput("cy",
-             label = "Given Y",
-             value = -999),
       numericInput("mu_x",
                    label = "Mean of x",
                    value = 0),
@@ -59,14 +62,14 @@ shinyUI(fluidPage(
       radioButtons(
         "resolution", label = h3("Resolution"),
         choices = list("Low", "High")
-      )))
+      )
     ),
     # Show the plot of the 3D bivariate normal distribution
     mainPanel(
       tabsetPanel(
         tabPanel("3D Plot", plotOutput("distPlot")),
         tabPanel("Conditional 3D Plot", plotOutput("conditionPlot")),
-        tabPanel("Contour Plot", plotOutput("contour"))
+        tabPanel("Slice Joint Probability", plotOutput("slicePlot"))
       )    
     ),
     position = c('left','right'),
