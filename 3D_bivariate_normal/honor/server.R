@@ -1,11 +1,14 @@
 shinyServer(function(input, output) {
-  # 3D Plot
+  # basic 3D Plot + Contour
   output$distPlot <- renderPlot({
+    # Use mvtnorm and plot 3D libraries
     library(mvtnorm)
     library(plot3D)
-    # wrap-up function
+    
+    # helper function for 3D bivaraite normal distribution
     bivariate_normal_3d <- function(mu_x,mu_y,sx,sy,r,n,cutoff,
                                     vertical_rotation,horizontal_rotation) {
+      # Convert resolution to sample size
       if (n == 'Low') {
         n = 25
       }
@@ -35,9 +38,10 @@ shinyServer(function(input, output) {
         }
       }
       
-      # 3D plot
+      # Put 3D plot and contour plot together
       par(mfrow = c(2,1))
       
+      # Draw the 3D plot
       persp3D(
         x,
         y,
@@ -56,7 +60,7 @@ shinyServer(function(input, output) {
       )
     }
     
-    #wrap-up function
+    # helper function for contour plot
     bvn_countour_plot <- function(ux,
                                   uy,
                                   sx,
@@ -67,7 +71,10 @@ shinyServer(function(input, output) {
                                   condition,
                                   X,
                                   Y) {
+      # Use ellipse library
       library(ellipse)
+      
+      # Parameters
       xlabel <- "x"
       ylabel <- "y"
       mu <- c(ux, uy)
@@ -134,159 +141,33 @@ shinyServer(function(input, output) {
       input$mu_x,input$mu_y,input$sx,input$sy,
       input$r,input$resolution,3.5,input$vr,input$hr
     )
-    bvn_countour_plot(input$mu_x,input$mu_y,input$sx,input$sy,
-                      input$r,input$cx,input$cy,input$condition,input$X,input$Y)
-  },
-  height = 1000, width = 800)
-  #---------------------------------------------------------------------------
-  # Condition Plot
-  output$conditionPlot <- renderPlot({
-    library(mvtnorm)
-    library(plot3D)
-    # wrap-up function
     
-    condition_3d <- function(mu_x,mu_y,sx,sy,r,n,cutoff,
-                             vertical_rotation,horizontal_rotation,cx,cy) {
-      if (n == 'Low') {
-        n = 25
-      }
-      else{
-        n = 100
-      }
-      # Use mvtnorm library and plot3D library
-      library(mvtnorm)
-      library(plot3D)
-      # Create grid of interesting values.
-      x <- seq(mu_x - cutoff * sx, mu_x + cutoff * sx, length = n)
-      y <- seq(mu_y - cutoff * sy, mu_y + cutoff * sy, length = n)
-      
-      
-      # create the mean matrix (u) and covariance matrix (s)
-      u <- c(mu_x, mu_y)
-      covariance <- r * sx * sy
-      s <- matrix(c(sx ^ 2, covariance, covariance, sy ^ 2), 2)
-      
-      # setup matrix to store densities
-      bivariate_normal <- matrix(0, n, n)
-      
-      # calculates the densities
-      if (missing(cx) & missing(cy)) {
-        for (i in seq_along(x)) {
-          for (j in seq_along(y)) {
-            bivariate_normal[i, j] <-
-              dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
-          }
-        }
-        # plots
-        persp3D(
-          x,
-          y,
-          bivariate_normal,
-          colvar = bivariate_normal,
-          phi = vertical_rotation,
-          theta = horizontal_rotation,
-          ticktype = "detailed",
-          expand = 0.5,
-          shade = 0.2,
-          xlab = "x",
-          ylab = "y",
-          zlab = "z = f(x, y)"
-        )
-      }
-      # condition on given X
-      else if (missing(cy)) {
-        for (i in which.min(abs(x - cx)):length(x)) {
-          for (j in seq_along(y)) {
-            bivariate_normal[i, j] <-
-              dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
-          }
-        }
-        # plots
-        persp3D(
-          x,
-          y,
-          bivariate_normal,
-          colvar = bivariate_normal,
-          phi = vertical_rotation,
-          theta = horizontal_rotation,
-          ticktype = "detailed",
-          expand = 0.5,
-          shade = 0.2,
-          xlab = "x",
-          ylab = "y",
-          zlab = "z = f(x, y)"
-        )
-      }
-      # condition on given Y
-      else if (missing(cx)) {
-        for (i in seq_along(x)) {
-          for (j in which.min(abs(y - cy)):length(y)) {
-            bivariate_normal[i, j] <-
-              dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
-          }
-        }
-        # plots
-        persp3D(
-          x,
-          y,
-          bivariate_normal,
-          colvar = bivariate_normal,
-          phi = vertical_rotation,
-          theta = horizontal_rotation,
-          ticktype = "detailed",
-          expand = 0.5,
-          shade = 0.2,
-          xlab = "x",
-          ylab = "y",
-          zlab = "z = f(x, y)"
-        )
-      }
-      # For debug use. This should not happen
-      else{
-        for (i in which.min(abs(x - cx)):length(x)) {
-          for (j in  which.min(abs(y - cy)):length(y)) {
-            bivariate_normal[i, j] <-
-              dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
-          }
-        }
-        # plots
-        persp3D(
-          x,
-          y,
-          bivariate_normal,
-          colvar = bivariate_normal,
-          phi = vertical_rotation,
-          theta = horizontal_rotation,
-          ticktype = "detailed",
-          expand = 0.5,
-          shade = 0.2,
-          xlab = "x",
-          ylab = "y",
-          zlab = "z = f(x, y)"
-        )
-      }
-    }
-    # Output
-    condition_3d(
-      input$mu_x,input$mu_y,input$sx,input$sy,input$r,input$resolution,3.5,input$vr,input$hr,cx =
-        0.02
+    bvn_countour_plot(
+      input$mu_x,input$mu_y,input$sx,input$sy,
+      input$r,input$cx,input$cy,input$condition,input$X,input$Y
     )
   },
+  # Adjust output image size
   height = 1000, width = 800)
   #---------------------------------------------------------------------------
-  output$slicePlot <- renderPlot({
-    slice_3d <- function(mu_x,mu_y,sx,sy,r,n,cutoff,
-                         vertical_rotation,horizontal_rotation,
-                         cx,cy,condition,X,Y) {
+  # 3D cutoff bivariate normal distribution given X or Y
+  output$cutoffPlot <- renderPlot({
+    # Use mvtnorm and plot 3D libraries
+    library(mvtnorm)
+    library(plot3D)
+    
+    # helper function for 3D cutoff bivariate normal distribution
+    
+    cutoff_3d <- function(mu_x,mu_y,sx,sy,r,n,cutoff,
+                          vertical_rotation,horizontal_rotation,cx,cy,condition,X,Y) {
+      # Convert resolution to sample size
       if (n == 'Low') {
         n = 25
       }
       else{
         n = 100
       }
-      # Use mvtnorm library and plot3D library
-      library(mvtnorm)
-      library(plot3D)
+      
       # Create grid of interesting values.
       x <- seq(mu_x - cutoff * sx, mu_x + cutoff * sx, length = n)
       y <- seq(mu_y - cutoff * sy, mu_y + cutoff * sy, length = n)
@@ -300,19 +181,39 @@ shinyServer(function(input, output) {
       # setup matrix to store densities
       bivariate_normal <- matrix(0, n, n)
       
-      
-      # calculates the densities
-      
-      # condition on given X
+      # Given X
       if (condition == TRUE) {
-        if (Y == FALSE & X == TRUE) {
-          #i = which.min(abs(x - cx))
-          for (i in which.min(abs(x - cx))-1:which.min(abs(x - cx))+1){
-          for (j in seq_along(y)) {
-            bivariate_normal[i, j] <-
-              dnorm(j, mean = (mu_y + (r * sy * (cx - mu_x)) /
-                                               sx), sd = sqrt((1 - r ^ 2) * sy ^ 2))
-          }}
+        if (X == TRUE & Y == FALSE) {
+          for (i in which.min(abs(x - cx)):length(x)) {
+            for (j in seq_along(y)) {
+              bivariate_normal[i, j] <-
+                dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
+            }
+          }
+          # plot
+          persp3D(
+            x,
+            y,
+            bivariate_normal,
+            colvar = bivariate_normal,
+            phi = vertical_rotation,
+            theta = horizontal_rotation,
+            ticktype = "detailed",
+            expand = 0.5,
+            shade = 0.2,
+            xlab = "x",
+            ylab = "y",
+            zlab = "z = f(x, y)"
+          )
+        }
+        # Given Y
+        if (Y == TRUE & X == FALSE) {
+          for (i in seq_along(x)) {
+            for (j in which.min(abs(y - cy)):length(y)) {
+              bivariate_normal[i, j] <-
+                dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
+            }
+          }
           # plots
           persp3D(
             x,
@@ -329,7 +230,72 @@ shinyServer(function(input, output) {
             zlab = "z = f(x, y)"
           )
         }
-        # condition on given Y
+      }
+    }
+    # Output
+    cutoff_3d(
+      input$mu_x,input$mu_y,input$sx,input$sy,input$r,input$resolution,3.5,input$vr,input$hr,input$cx,input$cy,input$condition,input$X,input$Y
+    )
+  },
+  
+  # Adjust output image size
+  height = 1000, width = 800)
+  #---------------------------------------------------------------------------
+  output$slicePlot <- renderPlot({
+    slice_3d <- function(mu_x,mu_y,sx,sy,r,n,cutoff,
+                         vertical_rotation,horizontal_rotation,
+                         cx,cy,condition,X,Y) {
+      # Convert resolution to sample size
+      if (n == 'Low') {
+        n = 25
+      }
+      else{
+        n = 100
+      }
+      # Use mvtnorm library and plot3D library
+      library(mvtnorm)
+      library(plot3D)
+      # Create grid of interesting values.
+      x <- seq(mu_x - cutoff * sx, mu_x + cutoff * sx, length = n)
+      y <- seq(mu_y - cutoff * sy, mu_y + cutoff * sy, length = n)
+      
+      
+      # create the mean matrix (u) and covariance matrix (s)
+      u <- c(mu_x, mu_y)
+      covariance <- r * sx * sy
+      s <- matrix(c(sx ^ 2, covariance, covariance, sy ^ 2), 2)
+      
+      # setup matrix to store densities
+      bivariate_normal <- matrix(0, n, n)
+      
+      
+      # Calculates the densities
+      
+      # Given X
+      if (condition == TRUE) {
+        if (Y == FALSE & X == TRUE) {
+          i = which.min(abs(x - cx))
+          for (j in seq_along(y)) {
+            bivariate_normal[i, j] <-
+              dmvnorm(c(x[i], y[j]), mean = u, sigma = s)
+          }
+          # plots
+          persp3D(
+            x,
+            y,
+            bivariate_normal,
+            colvar = bivariate_normal,
+            phi = vertical_rotation,
+            theta = horizontal_rotation,
+            ticktype = "detailed",
+            expand = 0.5,
+            shade = 0.2,
+            xlab = "x",
+            ylab = "y",
+            zlab = "z = f(x, y)"
+          )
+        }
+        # Given Y
         if (X == FALSE & Y == TRUE) {
           j = which.min(abs(y - cy))
           for (i in seq_along(x)) {
@@ -362,6 +328,6 @@ shinyServer(function(input, output) {
       input$cy,input$condition,input$X,input$Y
     )
   },
-    height = 1000, width = 800
-  )
+  # Adjust output image size
+  height = 1000, width = 800)
 })

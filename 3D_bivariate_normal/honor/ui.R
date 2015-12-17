@@ -68,11 +68,11 @@ shinyUI(fluidPage(
     mainPanel(
       tabsetPanel(
         tabPanel("3D Plot", plotOutput("distPlot")),
-        tabPanel("Conditional 3D Plot", plotOutput("conditionPlot")),
-        tabPanel("Slice Joint Probability", plotOutput("slicePlot"))
+        tabPanel("Cutoff 3D Plot", plotOutput("cutoffPlot")),
+        tabPanel("Condition Joint Probability", plotOutput("slicePlot"))
       )    
     ),
-    position = c('left','right'),
-    fluid = TRUE
+#     position = c('left','right'),
+#     fluid = TRUE
   )
 ))
