@@ -1,3 +1,3 @@
-# Statistics
+# James Scholar
 
-Projects for James Scholar Program and Fun
+Projects for James Scholar
